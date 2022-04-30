@@ -16,7 +16,11 @@ the distance in grid cells between two indexes).
 
 ### What resolution do we use?
 
-A neighborhood is roughly 5 square kilometers.
+Brooklyn is 250 sq km (one cell at Resolution 5)...
+
+Williamsburg is 5 sq km (one cell at Resolution 7)...
+
+Each finer-resolution cell is 7 times smaller than its coarser parent.
 
 H3 supports [multiple resolutions](https://h3geo.org/docs/core-library/restable):
 | H3 Resolution | Average Hexagon Area (km 2) | Average Hexagon Edge Length (km) | Number of unique indexes |
