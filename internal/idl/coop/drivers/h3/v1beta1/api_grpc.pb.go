@@ -39,6 +39,10 @@ type GeospatialIndexServiceClient interface {
 	//
 	// https://h3geo.org/docs/api/hierarchy#h3toparent
 	H3ToParent(ctx context.Context, in *H3ToParentRequest, opts ...grpc.CallOption) (*H3ToParentResponse, error)
+	// Returns children for index at given resolution.
+	//
+	// https://h3geo.org/docs/api/hierarchy#h3tochildren
+	H3ToChildren(ctx context.Context, in *H3ToChildrenRequest, opts ...grpc.CallOption) (*H3ToChildrenResponse, error)
 }
 
 type geospatialIndexServiceClient struct {
@@ -76,6 +80,15 @@ func (c *geospatialIndexServiceClient) H3ToParent(ctx context.Context, in *H3ToP
 	return out, nil
 }
 
+func (c *geospatialIndexServiceClient) H3ToChildren(ctx context.Context, in *H3ToChildrenRequest, opts ...grpc.CallOption) (*H3ToChildrenResponse, error) {
+	out := new(H3ToChildrenResponse)
+	err := c.cc.Invoke(ctx, "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3ToChildren", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GeospatialIndexServiceServer is the server API for GeospatialIndexService service.
 // All implementations should embed UnimplementedGeospatialIndexServiceServer
 // for forward compatibility
@@ -101,6 +114,10 @@ type GeospatialIndexServiceServer interface {
 	//
 	// https://h3geo.org/docs/api/hierarchy#h3toparent
 	H3ToParent(context.Context, *H3ToParentRequest) (*H3ToParentResponse, error)
+	// Returns children for index at given resolution.
+	//
+	// https://h3geo.org/docs/api/hierarchy#h3tochildren
+	H3ToChildren(context.Context, *H3ToChildrenRequest) (*H3ToChildrenResponse, error)
 }
 
 // UnimplementedGeospatialIndexServiceServer should be embedded to have forward compatible implementations.
@@ -115,6 +132,9 @@ func (UnimplementedGeospatialIndexServiceServer) KRing(context.Context, *KRingRe
 }
 func (UnimplementedGeospatialIndexServiceServer) H3ToParent(context.Context, *H3ToParentRequest) (*H3ToParentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method H3ToParent not implemented")
+}
+func (UnimplementedGeospatialIndexServiceServer) H3ToChildren(context.Context, *H3ToChildrenRequest) (*H3ToChildrenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method H3ToChildren not implemented")
 }
 
 // UnsafeGeospatialIndexServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -182,6 +202,24 @@ func _GeospatialIndexService_H3ToParent_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GeospatialIndexService_H3ToChildren_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(H3ToChildrenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeospatialIndexServiceServer).H3ToChildren(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3ToChildren",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeospatialIndexServiceServer).H3ToChildren(ctx, req.(*H3ToChildrenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GeospatialIndexService_ServiceDesc is the grpc.ServiceDesc for GeospatialIndexService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -200,6 +238,10 @@ var GeospatialIndexService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "H3ToParent",
 			Handler:    _GeospatialIndexService_H3ToParent_Handler,
+		},
+		{
+			MethodName: "H3ToChildren",
+			Handler:    _GeospatialIndexService_H3ToChildren_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

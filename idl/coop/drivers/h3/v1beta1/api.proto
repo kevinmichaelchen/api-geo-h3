@@ -5,6 +5,7 @@ package coop.drivers.h3.v1beta1;
 option go_package = "github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/drivers/h3/v1beta1";
 
 import "coop/drivers/h3/v1beta1/geo_to_h3.proto";
+import "coop/drivers/h3/v1beta1/h3_to_children.proto";
 import "coop/drivers/h3/v1beta1/h3_to_parent.proto";
 import "coop/drivers/h3/v1beta1/kring.proto";
 
@@ -32,4 +33,9 @@ service GeospatialIndexService {
   //
   // https://h3geo.org/docs/api/hierarchy#h3toparent
   rpc H3ToParent(H3ToParentRequest) returns (H3ToParentResponse) {}
+
+  // Returns children for index at given resolution.
+  //
+  // https://h3geo.org/docs/api/hierarchy#h3tochildren
+  rpc H3ToChildren(H3ToChildrenRequest) returns (H3ToChildrenResponse) {}
 }

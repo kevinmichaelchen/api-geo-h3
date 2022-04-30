@@ -4,6 +4,11 @@ package coop.drivers.h3.v1beta1;
 
 option go_package = "github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/drivers/h3/v1beta1";
 
-message H3ToChildrenRequest {}
+message H3ToChildrenRequest {
+  uint64 parent_index = 1;
+  int32 resolution = 2;
+}
 
-message H3ToChildrenResponse {}
+message H3ToChildrenResponse {
+  repeated uint64 children_indexes = 1;
+}

@@ -8,5 +8,5 @@ import (
 
 func H3ToParent(ctx context.Context, r *v1beta1.H3ToParentRequest) (*v1beta1.H3ToParentResponse, error) {
 	parentIndex := h3.ToParent(h3.H3Index(r.GetIndex()), int(r.GetResolution()))
-	return &v1beta1.H3ToParentResponse{Index: parentIndex}, nil
+	return &v1beta1.H3ToParentResponse{Index: fromIndex(parentIndex)}, nil
 }

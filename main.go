@@ -15,6 +15,8 @@ const (
 
 func main() {
 	ctx := context.Background()
+
+	// Get index from lat/lng
 	geoRes, err := h3.FromGeo(ctx, &v1beta1.GeoToH3Request{
 		Coordinates: &v1beta1.LatLng{
 			Latitude:  lat,
@@ -26,8 +28,9 @@ func main() {
 		log.Fatal(err)
 	}
 	index := geoRes.GetIndex()
-	log.Println("Index = ", index)
+	log.Println("Index =", index)
 
+	// Get neighboring cells
 	kringRes, err := h3.KRing(ctx, &v1beta1.KRingRequest{
 		OriginIndex: index,
 		K:           1,
@@ -36,4 +39,24 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Printf("Neighbors = %v\n", kringRes.GetIndexes())
+
+	// Get parent
+	parentRes, err := h3.H3ToParent(ctx, &v1beta1.H3ToParentRequest{
+		Index:      index,
+		Resolution: res - 1,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Parent index = %v\n", parentRes.GetIndex())
+
+	// Get children
+	childrenRes, err := h3.H3ToChildren(ctx, &v1beta1.H3ToChildrenRequest{
+		ParentIndex: parentRes.GetIndex(),
+		Resolution:  res,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Children = %v\n", childrenRes.GetChildrenIndexes())
 }
