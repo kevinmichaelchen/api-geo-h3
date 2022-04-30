@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package coop.drivers.h3.v1beta1;
+
+option go_package = "github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/drivers/h3/v1beta1";
+
+// Request to get a cell's parent (coarser) index.
+message H3ToParentRequest {
+  uint64 index = 1;
+  int32 resolution = 2;
+}
+
+message H3ToParentResponse {
+  uint64 index = 1;
+}
