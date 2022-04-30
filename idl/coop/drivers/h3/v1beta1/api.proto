@@ -6,6 +6,7 @@ option go_package = "github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/dr
 
 import "coop/drivers/h3/v1beta1/geo_to_h3.proto";
 import "coop/drivers/h3/v1beta1/h3_distance.proto";
+import "coop/drivers/h3/v1beta1/h3_get_resolution.proto";
 import "coop/drivers/h3/v1beta1/h3_to_children.proto";
 import "coop/drivers/h3/v1beta1/h3_to_parent.proto";
 import "coop/drivers/h3/v1beta1/kring.proto";
@@ -27,6 +28,9 @@ service GeospatialIndexService {
   // This is the same set of limitations as the local IJ coordinate space
   // functions.
   rpc H3Distance(H3DistanceRequest) returns (H3DistanceResponse) {}
+
+  // Returns the resolution of the index.
+  rpc H3GetResolution(H3GetResolutionRequest) returns (H3GetResolutionResponse) {}
 
   // Returns children for index at given resolution.
   //

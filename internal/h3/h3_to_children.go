@@ -7,6 +7,6 @@ import (
 )
 
 func H3ToChildren(ctx context.Context, r *v1beta1.H3ToChildrenRequest) (*v1beta1.H3ToChildrenResponse, error) {
-	children := h3.ToChildren(h3.H3Index(r.GetParentIndex()), int(r.GetResolution()))
+	children := h3.ToChildren(ToIndex(r.GetParentIndex()), int(r.GetResolution()))
 	return &v1beta1.H3ToChildrenResponse{ChildrenIndexes: FromIndexes(children)}, nil
 }

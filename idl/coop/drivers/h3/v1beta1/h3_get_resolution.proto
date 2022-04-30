@@ -4,12 +4,10 @@ package coop.drivers.h3.v1beta1;
 
 option go_package = "github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/drivers/h3/v1beta1";
 
-message H3DistanceRequest {
-  uint64 index1 = 1;
-  uint64 index2 = 2;
+message H3GetResolutionRequest {
+  uint64 index = 1;
 }
 
-message H3DistanceResponse {
-  // Distance in grid cells.
-  int32 distance = 1;
+message H3GetResolutionResponse {
+  int32 resolution = 1;
 }

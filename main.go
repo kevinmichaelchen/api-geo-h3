@@ -33,6 +33,13 @@ func main() {
 	log.Println("Index")
 	pretty.Println(index)
 
+	// Get resolution
+	resolutionRes, err := h3.GetResolution(ctx, &v1beta1.H3GetResolutionRequest{Index: index})
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Resolution =", resolutionRes.GetResolution())
+
 	// Get neighboring cells
 	kringRes, err := h3.KRing(ctx, &v1beta1.KRingRequest{
 		OriginIndex: index,

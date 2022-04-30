@@ -33,6 +33,8 @@ type GeospatialIndexServiceClient interface {
 	// This is the same set of limitations as the local IJ coordinate space
 	// functions.
 	H3Distance(ctx context.Context, in *H3DistanceRequest, opts ...grpc.CallOption) (*H3DistanceResponse, error)
+	// Returns the resolution of the index.
+	H3GetResolution(ctx context.Context, in *H3GetResolutionRequest, opts ...grpc.CallOption) (*H3GetResolutionResponse, error)
 	// Returns children for index at given resolution.
 	//
 	// https://h3geo.org/docs/api/hierarchy#h3tochildren
@@ -73,6 +75,15 @@ func (c *geospatialIndexServiceClient) GeoToH3(ctx context.Context, in *GeoToH3R
 func (c *geospatialIndexServiceClient) H3Distance(ctx context.Context, in *H3DistanceRequest, opts ...grpc.CallOption) (*H3DistanceResponse, error) {
 	out := new(H3DistanceResponse)
 	err := c.cc.Invoke(ctx, "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3Distance", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *geospatialIndexServiceClient) H3GetResolution(ctx context.Context, in *H3GetResolutionRequest, opts ...grpc.CallOption) (*H3GetResolutionResponse, error) {
+	out := new(H3GetResolutionResponse)
+	err := c.cc.Invoke(ctx, "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3GetResolution", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,6 +136,8 @@ type GeospatialIndexServiceServer interface {
 	// This is the same set of limitations as the local IJ coordinate space
 	// functions.
 	H3Distance(context.Context, *H3DistanceRequest) (*H3DistanceResponse, error)
+	// Returns the resolution of the index.
+	H3GetResolution(context.Context, *H3GetResolutionRequest) (*H3GetResolutionResponse, error)
 	// Returns children for index at given resolution.
 	//
 	// https://h3geo.org/docs/api/hierarchy#h3tochildren
@@ -154,6 +167,9 @@ func (UnimplementedGeospatialIndexServiceServer) GeoToH3(context.Context, *GeoTo
 }
 func (UnimplementedGeospatialIndexServiceServer) H3Distance(context.Context, *H3DistanceRequest) (*H3DistanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method H3Distance not implemented")
+}
+func (UnimplementedGeospatialIndexServiceServer) H3GetResolution(context.Context, *H3GetResolutionRequest) (*H3GetResolutionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method H3GetResolution not implemented")
 }
 func (UnimplementedGeospatialIndexServiceServer) H3ToChildren(context.Context, *H3ToChildrenRequest) (*H3ToChildrenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method H3ToChildren not implemented")
@@ -208,6 +224,24 @@ func _GeospatialIndexService_H3Distance_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GeospatialIndexServiceServer).H3Distance(ctx, req.(*H3DistanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GeospatialIndexService_H3GetResolution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(H3GetResolutionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeospatialIndexServiceServer).H3GetResolution(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3GetResolution",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeospatialIndexServiceServer).H3GetResolution(ctx, req.(*H3GetResolutionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -280,6 +314,10 @@ var GeospatialIndexService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "H3Distance",
 			Handler:    _GeospatialIndexService_H3Distance_Handler,
+		},
+		{
+			MethodName: "H3GetResolution",
+			Handler:    _GeospatialIndexService_H3GetResolution_Handler,
 		},
 		{
 			MethodName: "H3ToChildren",

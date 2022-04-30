@@ -7,6 +7,6 @@ import (
 )
 
 func H3ToParent(ctx context.Context, r *v1beta1.H3ToParentRequest) (*v1beta1.H3ToParentResponse, error) {
-	parentIndex := h3.ToParent(h3.H3Index(r.GetIndex()), int(r.GetResolution()))
+	parentIndex := h3.ToParent(ToIndex(r.GetIndex()), int(r.GetResolution()))
 	return &v1beta1.H3ToParentResponse{Index: FromIndex(parentIndex)}, nil
 }
