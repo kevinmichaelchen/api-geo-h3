@@ -5,6 +5,7 @@ package coop.drivers.h3.v1beta1;
 option go_package = "github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/drivers/h3/v1beta1";
 
 import "coop/drivers/h3/v1beta1/geo_to_h3.proto";
+import "coop/drivers/h3/v1beta1/h3_distance.proto";
 import "coop/drivers/h3/v1beta1/h3_to_children.proto";
 import "coop/drivers/h3/v1beta1/h3_to_parent.proto";
 import "coop/drivers/h3/v1beta1/kring.proto";
@@ -18,6 +19,25 @@ service GeospatialIndexService {
   // https://h3geo.org/docs/api/indexing/#geotoh3
   rpc GeoToH3(GeoToH3Request) returns (GeoToH3Response) {}
 
+  // Returns the distance in grid cells between the two indexes.
+  //
+  // Returns a negative number if finding the distance failed. Finding the
+  // distance can fail because the two indexes are not comparable (different
+  // resolutions), too far apart, or are separated by pentagonal distortion.
+  // This is the same set of limitations as the local IJ coordinate space
+  // functions.
+  rpc H3Distance(H3DistanceRequest) returns (H3DistanceResponse) {}
+
+  // Returns children for index at given resolution.
+  //
+  // https://h3geo.org/docs/api/hierarchy#h3tochildren
+  rpc H3ToChildren(H3ToChildrenRequest) returns (H3ToChildrenResponse) {}
+
+  // Returns the parent (coarser) index.
+  //
+  // https://h3geo.org/docs/api/hierarchy#h3toparent
+  rpc H3ToParent(H3ToParentRequest) returns (H3ToParentResponse) {}
+
   // k-rings produces indices within k distance of the origin index.
   // k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0
   // and all neighboring indices, and so on.
@@ -28,14 +48,4 @@ service GeospatialIndexService {
   //
   // https://h3geo.org/docs/api/traversal/#kring
   rpc KRing(KRingRequest) returns (KRingResponse) {}
-
-  // Returns the parent (coarser) index.
-  //
-  // https://h3geo.org/docs/api/hierarchy#h3toparent
-  rpc H3ToParent(H3ToParentRequest) returns (H3ToParentResponse) {}
-
-  // Returns children for index at given resolution.
-  //
-  // https://h3geo.org/docs/api/hierarchy#h3tochildren
-  rpc H3ToChildren(H3ToChildrenRequest) returns (H3ToChildrenResponse) {}
 }

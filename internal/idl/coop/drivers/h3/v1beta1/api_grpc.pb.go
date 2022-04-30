@@ -25,6 +25,22 @@ type GeospatialIndexServiceClient interface {
 	//
 	// https://h3geo.org/docs/api/indexing/#geotoh3
 	GeoToH3(ctx context.Context, in *GeoToH3Request, opts ...grpc.CallOption) (*GeoToH3Response, error)
+	// Returns the distance in grid cells between the two indexes.
+	//
+	// Returns a negative number if finding the distance failed. Finding the
+	// distance can fail because the two indexes are not comparable (different
+	// resolutions), too far apart, or are separated by pentagonal distortion.
+	// This is the same set of limitations as the local IJ coordinate space
+	// functions.
+	H3Distance(ctx context.Context, in *H3DistanceRequest, opts ...grpc.CallOption) (*H3DistanceResponse, error)
+	// Returns children for index at given resolution.
+	//
+	// https://h3geo.org/docs/api/hierarchy#h3tochildren
+	H3ToChildren(ctx context.Context, in *H3ToChildrenRequest, opts ...grpc.CallOption) (*H3ToChildrenResponse, error)
+	// Returns the parent (coarser) index.
+	//
+	// https://h3geo.org/docs/api/hierarchy#h3toparent
+	H3ToParent(ctx context.Context, in *H3ToParentRequest, opts ...grpc.CallOption) (*H3ToParentResponse, error)
 	// k-rings produces indices within k distance of the origin index.
 	// k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0
 	// and all neighboring indices, and so on.
@@ -35,14 +51,6 @@ type GeospatialIndexServiceClient interface {
 	//
 	// https://h3geo.org/docs/api/traversal/#kring
 	KRing(ctx context.Context, in *KRingRequest, opts ...grpc.CallOption) (*KRingResponse, error)
-	// Returns the parent (coarser) index.
-	//
-	// https://h3geo.org/docs/api/hierarchy#h3toparent
-	H3ToParent(ctx context.Context, in *H3ToParentRequest, opts ...grpc.CallOption) (*H3ToParentResponse, error)
-	// Returns children for index at given resolution.
-	//
-	// https://h3geo.org/docs/api/hierarchy#h3tochildren
-	H3ToChildren(ctx context.Context, in *H3ToChildrenRequest, opts ...grpc.CallOption) (*H3ToChildrenResponse, error)
 }
 
 type geospatialIndexServiceClient struct {
@@ -62,9 +70,18 @@ func (c *geospatialIndexServiceClient) GeoToH3(ctx context.Context, in *GeoToH3R
 	return out, nil
 }
 
-func (c *geospatialIndexServiceClient) KRing(ctx context.Context, in *KRingRequest, opts ...grpc.CallOption) (*KRingResponse, error) {
-	out := new(KRingResponse)
-	err := c.cc.Invoke(ctx, "/coop.drivers.h3.v1beta1.GeospatialIndexService/KRing", in, out, opts...)
+func (c *geospatialIndexServiceClient) H3Distance(ctx context.Context, in *H3DistanceRequest, opts ...grpc.CallOption) (*H3DistanceResponse, error) {
+	out := new(H3DistanceResponse)
+	err := c.cc.Invoke(ctx, "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3Distance", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *geospatialIndexServiceClient) H3ToChildren(ctx context.Context, in *H3ToChildrenRequest, opts ...grpc.CallOption) (*H3ToChildrenResponse, error) {
+	out := new(H3ToChildrenResponse)
+	err := c.cc.Invoke(ctx, "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3ToChildren", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,9 +97,9 @@ func (c *geospatialIndexServiceClient) H3ToParent(ctx context.Context, in *H3ToP
 	return out, nil
 }
 
-func (c *geospatialIndexServiceClient) H3ToChildren(ctx context.Context, in *H3ToChildrenRequest, opts ...grpc.CallOption) (*H3ToChildrenResponse, error) {
-	out := new(H3ToChildrenResponse)
-	err := c.cc.Invoke(ctx, "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3ToChildren", in, out, opts...)
+func (c *geospatialIndexServiceClient) KRing(ctx context.Context, in *KRingRequest, opts ...grpc.CallOption) (*KRingResponse, error) {
+	out := new(KRingResponse)
+	err := c.cc.Invoke(ctx, "/coop.drivers.h3.v1beta1.GeospatialIndexService/KRing", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,6 +117,22 @@ type GeospatialIndexServiceServer interface {
 	//
 	// https://h3geo.org/docs/api/indexing/#geotoh3
 	GeoToH3(context.Context, *GeoToH3Request) (*GeoToH3Response, error)
+	// Returns the distance in grid cells between the two indexes.
+	//
+	// Returns a negative number if finding the distance failed. Finding the
+	// distance can fail because the two indexes are not comparable (different
+	// resolutions), too far apart, or are separated by pentagonal distortion.
+	// This is the same set of limitations as the local IJ coordinate space
+	// functions.
+	H3Distance(context.Context, *H3DistanceRequest) (*H3DistanceResponse, error)
+	// Returns children for index at given resolution.
+	//
+	// https://h3geo.org/docs/api/hierarchy#h3tochildren
+	H3ToChildren(context.Context, *H3ToChildrenRequest) (*H3ToChildrenResponse, error)
+	// Returns the parent (coarser) index.
+	//
+	// https://h3geo.org/docs/api/hierarchy#h3toparent
+	H3ToParent(context.Context, *H3ToParentRequest) (*H3ToParentResponse, error)
 	// k-rings produces indices within k distance of the origin index.
 	// k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0
 	// and all neighboring indices, and so on.
@@ -110,14 +143,6 @@ type GeospatialIndexServiceServer interface {
 	//
 	// https://h3geo.org/docs/api/traversal/#kring
 	KRing(context.Context, *KRingRequest) (*KRingResponse, error)
-	// Returns the parent (coarser) index.
-	//
-	// https://h3geo.org/docs/api/hierarchy#h3toparent
-	H3ToParent(context.Context, *H3ToParentRequest) (*H3ToParentResponse, error)
-	// Returns children for index at given resolution.
-	//
-	// https://h3geo.org/docs/api/hierarchy#h3tochildren
-	H3ToChildren(context.Context, *H3ToChildrenRequest) (*H3ToChildrenResponse, error)
 }
 
 // UnimplementedGeospatialIndexServiceServer should be embedded to have forward compatible implementations.
@@ -127,14 +152,17 @@ type UnimplementedGeospatialIndexServiceServer struct {
 func (UnimplementedGeospatialIndexServiceServer) GeoToH3(context.Context, *GeoToH3Request) (*GeoToH3Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GeoToH3 not implemented")
 }
-func (UnimplementedGeospatialIndexServiceServer) KRing(context.Context, *KRingRequest) (*KRingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method KRing not implemented")
+func (UnimplementedGeospatialIndexServiceServer) H3Distance(context.Context, *H3DistanceRequest) (*H3DistanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method H3Distance not implemented")
+}
+func (UnimplementedGeospatialIndexServiceServer) H3ToChildren(context.Context, *H3ToChildrenRequest) (*H3ToChildrenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method H3ToChildren not implemented")
 }
 func (UnimplementedGeospatialIndexServiceServer) H3ToParent(context.Context, *H3ToParentRequest) (*H3ToParentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method H3ToParent not implemented")
 }
-func (UnimplementedGeospatialIndexServiceServer) H3ToChildren(context.Context, *H3ToChildrenRequest) (*H3ToChildrenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method H3ToChildren not implemented")
+func (UnimplementedGeospatialIndexServiceServer) KRing(context.Context, *KRingRequest) (*KRingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method KRing not implemented")
 }
 
 // UnsafeGeospatialIndexServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -166,38 +194,20 @@ func _GeospatialIndexService_GeoToH3_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GeospatialIndexService_KRing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(KRingRequest)
+func _GeospatialIndexService_H3Distance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(H3DistanceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeospatialIndexServiceServer).KRing(ctx, in)
+		return srv.(GeospatialIndexServiceServer).H3Distance(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/coop.drivers.h3.v1beta1.GeospatialIndexService/KRing",
+		FullMethod: "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3Distance",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeospatialIndexServiceServer).KRing(ctx, req.(*KRingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GeospatialIndexService_H3ToParent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(H3ToParentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GeospatialIndexServiceServer).H3ToParent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3ToParent",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeospatialIndexServiceServer).H3ToParent(ctx, req.(*H3ToParentRequest))
+		return srv.(GeospatialIndexServiceServer).H3Distance(ctx, req.(*H3DistanceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -220,6 +230,42 @@ func _GeospatialIndexService_H3ToChildren_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GeospatialIndexService_H3ToParent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(H3ToParentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeospatialIndexServiceServer).H3ToParent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/coop.drivers.h3.v1beta1.GeospatialIndexService/H3ToParent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeospatialIndexServiceServer).H3ToParent(ctx, req.(*H3ToParentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GeospatialIndexService_KRing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KRingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeospatialIndexServiceServer).KRing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/coop.drivers.h3.v1beta1.GeospatialIndexService/KRing",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeospatialIndexServiceServer).KRing(ctx, req.(*KRingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GeospatialIndexService_ServiceDesc is the grpc.ServiceDesc for GeospatialIndexService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -232,16 +278,20 @@ var GeospatialIndexService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GeospatialIndexService_GeoToH3_Handler,
 		},
 		{
-			MethodName: "KRing",
-			Handler:    _GeospatialIndexService_KRing_Handler,
+			MethodName: "H3Distance",
+			Handler:    _GeospatialIndexService_H3Distance_Handler,
+		},
+		{
+			MethodName: "H3ToChildren",
+			Handler:    _GeospatialIndexService_H3ToChildren_Handler,
 		},
 		{
 			MethodName: "H3ToParent",
 			Handler:    _GeospatialIndexService_H3ToParent_Handler,
 		},
 		{
-			MethodName: "H3ToChildren",
-			Handler:    _GeospatialIndexService_H3ToChildren_Handler,
+			MethodName: "KRing",
+			Handler:    _GeospatialIndexService_KRing_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
