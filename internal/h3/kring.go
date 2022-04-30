@@ -8,5 +8,5 @@ import (
 
 func KRing(ctx context.Context, r *v1beta1.KRingRequest) (*v1beta1.KRingResponse, error) {
 	indexes := h3.KRing(h3.H3Index(r.GetOriginIndex()), int(r.GetK()))
-	return &v1beta1.KRingResponse{Indexes: fromIndexes(indexes)}, nil
+	return &v1beta1.KRingResponse{Indexes: FromIndexes(indexes)}, nil
 }

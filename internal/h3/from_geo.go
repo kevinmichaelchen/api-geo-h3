@@ -11,5 +11,5 @@ func FromGeo(ctx context.Context, r *v1beta1.GeoToH3Request) (*v1beta1.GeoToH3Re
 		Latitude:  r.GetCoordinates().GetLatitude(),
 		Longitude: r.GetCoordinates().GetLongitude(),
 	}, int(r.GetResolution()))
-	return &v1beta1.GeoToH3Response{Index: fromIndex(index)}, nil
+	return &v1beta1.GeoToH3Response{Index: FromIndex(index)}, nil
 }

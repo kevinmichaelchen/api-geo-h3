@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/kevinmichaelchen/api-geo-h3/internal/h3"
 	"github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/drivers/h3/v1beta1"
+	"github.com/kr/pretty"
+	h3Go "github.com/uber/h3-go"
 	"log"
 )
 
@@ -28,7 +30,8 @@ func main() {
 		log.Fatal(err)
 	}
 	index := geoRes.GetIndex()
-	log.Println("Index =", index)
+	log.Println("Index")
+	pretty.Println(index)
 
 	// Get neighboring cells
 	kringRes, err := h3.KRing(ctx, &v1beta1.KRingRequest{
@@ -38,7 +41,23 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Neighbors = %v\n", kringRes.GetIndexes())
+	log.Println("Neighbors")
+	pretty.Println(kringRes.GetIndexes())
+
+	// K-Ring Distances
+	log.Println("KRingDistances")
+	kringDistances := h3Go.KRingDistances(h3Go.H3Index(index), 1)
+	for _, kr := range kringDistances {
+		pretty.Println(h3.FromIndexes(kr))
+	}
+
+	// Hex Ring
+	log.Println("HexRing")
+	hexRing, err := h3Go.HexRing(h3Go.H3Index(index), 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	pretty.Println(h3.FromIndexes(hexRing))
 
 	// Get parent
 	parentRes, err := h3.H3ToParent(ctx, &v1beta1.H3ToParentRequest{
