@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package coop.drivers.h3.v1beta1;
+
+option go_package = "github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/drivers/h3/v1beta1";
+
+import "coop/drivers/h3/v1beta1/geo_to_h3.proto";
+import "coop/drivers/h3/v1beta1/kring.proto";
+
+service GeospatialIndexService {
+  // Indexes the location at the specified resolution, returning the index of
+  // the cell containing the location. This buckets the geographic point into
+  // the H3 grid. See the algorithm description for more information:
+  // https://h3geo.org/docs/core-library/geoToH3desc
+  //
+  // https://h3geo.org/docs/api/indexing/#geotoh3
+  rpc GeoToH3(GeoToH3Request) returns (GeoToH3Response) {}
+
+  // k-rings produces indices within k distance of the origin index.
+  // k-ring 0 is defined as the origin index, k-ring 1 is defined as k-ring 0
+  // and all neighboring indices, and so on.
+  //
+  // Output is placed in the provided array in no particular order. Elements
+  // of the output array may be left zero, as can happen when crossing a
+  // pentagon.
+  //
+  // https://h3geo.org/docs/api/traversal/#kring
+  rpc KRing(KRingRequest) returns (KRingResponse) {}
+}

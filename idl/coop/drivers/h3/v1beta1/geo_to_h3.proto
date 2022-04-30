@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package coop.drivers.h3.v1beta1;
+
+option go_package = "github.com/kevinmichaelchen/api-geo-h3/internal/idl/coop/drivers/h3/v1beta1";
+
+import "coop/drivers/h3/v1beta1/latlng.proto";
+
+message GeoToH3Request {
+  LatLng coordinates = 1;
+  int32 resolution = 2;
+}
+
+message GeoToH3Response {
+  uint64 index = 1;
+}
